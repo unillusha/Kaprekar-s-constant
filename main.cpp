@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 
+
 using namespace std;
 
 int sortDescending(int num){
@@ -57,15 +58,22 @@ int main()
         cout << "Enter a 4-digit number: ";
         cin >> input;
 
-        // Call the sortDescending function and display the result
-        int largest = sortDescending(input);
-        cout << "Digits in descending order: " << largest << endl;
+        int difference;
 
-        int smallest = sortAscending(input);
-        cout << "Digits in ascending order: " << smallest << endl;
+        while(difference != 6174){
+            int largest = sortDescending(input);
+            int smallest = sortAscending(input);
 
-        int result = largest - smallest;
-        cout << "Result: " << result << endl;
+            difference = largest - smallest;
+            cout << largest << "-" << smallest << "=" << difference << endl;
+            input = difference;
+
+            if(difference == 6174){
+                cout << "Kaprekar's constant reached!" << endl;
+                break;
+            }
+        }
+        break;
 
     }
 
