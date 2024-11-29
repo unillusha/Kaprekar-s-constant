@@ -56,6 +56,22 @@ int sortAscending(int num) {
     return result;
 }
 
+int make4DigitNumber(int inputNum){
+    if(inputNum < 10){
+        inputNum *= 1000;
+    }
+
+    if(inputNum < 100){
+        inputNum *= 100;
+    }
+
+    if(inputNum < 1000){
+        inputNum *= 10;
+    }
+
+    return inputNum;
+}
+
 int main() {
     string input;
     int number;
@@ -67,18 +83,7 @@ int main() {
         // Validate input: must be exactly 4 digits and numeric
         if (input.length() == 4 && all_of(input.begin(), input.end(), ::isdigit)) {
             number = stoi(input); // Convert string to integer
-
-            if(number < 10){
-                number *= 1000;
-            }
-
-            if(number < 100){
-                number *= 100;
-            }
-
-            if(number < 1000){
-                number *= 10;
-            }
+            number = make4DigitNumber(number);
 
         } else {
             cout << "Invalid input. Please enter a 4-digit number." << endl;
@@ -95,17 +100,7 @@ int main() {
             cout << largest << " - " << smallest << " = " << difference << endl;
 
             number = difference; // Update `number` with the new difference
-            if(number < 10){
-                number *= 1000;
-            }
-
-            if(number < 100){
-                number *= 100;
-            }
-
-            if(number < 1000){
-                number *= 10;
-            }
+            number = make4DigitNumber(number);
 
             if (difference == 6174) {
                 cout << "Kaprekar's constant reached!" << endl;
