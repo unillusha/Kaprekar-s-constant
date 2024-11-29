@@ -17,6 +17,11 @@ int sortDescending(int num) {
     // Sort in descending order
     sort(digits.begin(), digits.end(), greater<int>());
 
+    for (int i = 0; i < digits.size(); i++){
+        cout << digits[i] << " ";
+    }
+    printf("\n");
+
     // Recombine digits into a number
     int result = 0;
     for (int digit : digits) {
@@ -37,6 +42,10 @@ int sortAscending(int num) {
 
     // Sort in ascending order
     sort(digits.begin(), digits.end());
+    for (int i = 0; i < digits.size(); i++){
+        cout << digits[i] << " ";
+    }
+    printf("\n");
 
     // Recombine digits into a number
     int result = 0;
@@ -58,6 +67,19 @@ int main() {
         // Validate input: must be exactly 4 digits and numeric
         if (input.length() == 4 && all_of(input.begin(), input.end(), ::isdigit)) {
             number = stoi(input); // Convert string to integer
+
+            if(number < 10){
+                number *= 1000;
+            }
+
+            if(number < 100){
+                number *= 100;
+            }
+
+            if(number < 1000){
+                number *= 10;
+            }
+
         } else {
             cout << "Invalid input. Please enter a 4-digit number." << endl;
             continue; // Ask for input again
@@ -73,6 +95,17 @@ int main() {
             cout << largest << " - " << smallest << " = " << difference << endl;
 
             number = difference; // Update `number` with the new difference
+            if(number < 10){
+                number *= 1000;
+            }
+
+            if(number < 100){
+                number *= 100;
+            }
+
+            if(number < 1000){
+                number *= 10;
+            }
 
             if (difference == 6174) {
                 cout << "Kaprekar's constant reached!" << endl;
