@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
 
 using namespace std;
 
@@ -16,11 +18,6 @@ int sortDescending(int num) {
 
     // Sort in descending order
     sort(digits.begin(), digits.end(), greater<int>());
-
-    for (int i = 0; i < digits.size(); i++){
-        cout << digits[i] << " ";
-    }
-    printf("\n");
 
     // Recombine digits into a number
     int result = 0;
@@ -42,10 +39,6 @@ int sortAscending(int num) {
 
     // Sort in ascending order
     sort(digits.begin(), digits.end());
-    for (int i = 0; i < digits.size(); i++){
-        cout << digits[i] << " ";
-    }
-    printf("\n");
 
     // Recombine digits into a number
     int result = 0;
@@ -56,64 +49,79 @@ int sortAscending(int num) {
     return result;
 }
 
-int make4DigitNumber(int inputNum){
-    if(inputNum < 10){
+int make4DigitNumber(int inputNum) {
+    if (inputNum < 10) {
         inputNum *= 1000;
-    }
-
-    if(inputNum < 100){
+    } else if (inputNum < 100) {
         inputNum *= 100;
-    }
-
-    if(inputNum < 1000){
+    } else if (inputNum < 1000) {
         inputNum *= 10;
     }
 
     return inputNum;
 }
 
-int main() {
-    string input;
-    int number;
+void kaprekarProcess(int originalNumber) {
+    int number = originalNumber; // Use a separate variable for the process
+    int steps = 0;
+    vector<string> explanations; // Store explanations for each step
 
     while (true) {
-        cout << "Enter a 4-digit number: ";
-        cin >> input;
+        int largest = sortDescending(number);
+        int smallest = sortAscending(number);
 
-        // Validate input: must be exactly 4 digits and numeric
+        int difference = largest - smallest;
+        steps++;
+
+        // Store the explanation for this step
+        string explanation = to_string(largest) + " - " + to_string(smallest) + " = " + to_string(difference);
+        explanations.push_back(explanation);
+
+        number = difference; // Update `number` with the new difference
+        number = make4DigitNumber(number);
+
+        if (difference == 6174) {
+            break;
+        }
+
+        if (difference == 0) {
+            cout << "Kaprekar's constant not reached because all the digits are the same" << endl;
+            return;
+        }
+    }
+
+    // Display the output in the required format
+    cout << "Input: " << originalNumber << endl; // Print the original input
+    cout << "Output: " << steps << endl;
+    cout << "Explanation:" << endl;
+    for (const string& exp : explanations) {
+        cout << exp << endl;
+    }
+}
+
+int main(int argc, char* argv[]) {
+    int number;
+
+    if (argc == 1) {
+        // No command-line argument provided, generate a random 4-digit number
+        srand(time(0)); // Seed the random number generator
+        number = rand() % 9000 + 1000; // Generate a random 4-digit number
+    } else if (argc == 2) {
+        // A number is provided as a command-line argument
+        string input = argv[1];
         if (input.length() == 4 && all_of(input.begin(), input.end(), ::isdigit)) {
             number = stoi(input); // Convert string to integer
             number = make4DigitNumber(number);
-
         } else {
-            cout << "Invalid input. Please enter a 4-digit number." << endl;
-            continue; // Ask for input again
+            cout << "Invalid input. Please provide a 4-digit number." << endl;
+            return 1; // Exit the program
         }
-
-        int difference = -1; // Initialize to avoid infinite loop
-
-        while (difference != 6174) {
-            int largest = sortDescending(number);
-            int smallest = sortAscending(number);
-
-            difference = largest - smallest;
-            cout << largest << " - " << smallest << " = " << difference << endl;
-
-            number = difference; // Update `number` with the new difference
-            number = make4DigitNumber(number);
-
-            if (difference == 6174) {
-                cout << "Kaprekar's constant reached!" << endl;
-                break;
-            }
-
-            if(difference == 0){
-                cout << "Kaprekar's constant not reached because all the digits are the same" << endl;
-                break;
-            }
-        }
-        printf("\n");
+    } else {
+        cout << "Usage: " << argv[0] << " [4-digit number]" << endl;
+        return 1; // Exit the program
     }
+
+    kaprekarProcess(number);
 
     return 0;
 }
