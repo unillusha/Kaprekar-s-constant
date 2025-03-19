@@ -61,10 +61,8 @@ int make4DigitNumber(int inputNum) {
     return inputNum;
 }
 
-void kaprekarProcess(int originalNumber) {
-    int number = originalNumber; // Use a separate variable for the process
+int calculateKaprekarSteps(int number) {
     int steps = 0;
-    vector<string> explanations; // Store explanations for each step
 
     while (true) {
         int largest = sortDescending(number);
@@ -72,10 +70,6 @@ void kaprekarProcess(int originalNumber) {
 
         int difference = largest - smallest;
         steps++;
-
-        // Store the explanation for this step
-        string explanation = to_string(largest) + " - " + to_string(smallest) + " = " + to_string(difference);
-        explanations.push_back(explanation);
 
         number = difference; // Update `number` with the new difference
         number = make4DigitNumber(number);
@@ -85,43 +79,73 @@ void kaprekarProcess(int originalNumber) {
         }
 
         if (difference == 0) {
-            cout << "Kaprekar's constant not reached because all the digits are the same" << endl;
-            return;
+            return -1; // Kaprekar's constant not reached
         }
     }
 
-    // Display the output in the required format
-    cout << "Input: " << originalNumber << endl; // Print the original input
-    cout << "Output: " << steps << endl;
-    cout << "Explanation:" << endl;
-    for (const string& exp : explanations) {
-        cout << exp << endl;
+    return steps;
+}
+
+void kaprekarProcess(int originalNumber) {
+    int steps = calculateKaprekarSteps(originalNumber);
+
+    if (steps == -1) {
+        cout << "Kaprekar's constant not reached because all the digits are the same" << endl;
+    } else {
+        cout << "Input: " << originalNumber << endl;
+        cout << "Output: " << steps << endl;
+    }
+}
+
+void listStepsForAllNumbers(int minNumber) {
+    for (int num = minNumber; num <= 9999; num++) {
+        int steps = calculateKaprekarSteps(num);
+
+        if (steps != -1) {
+            cout << num << "\t" << steps << endl;
+        } else {
+            cout << num << "\t" << "x" << endl;
+        }
     }
 }
 
 int main(int argc, char* argv[]) {
-    int number;
-
     if (argc == 1) {
         // No command-line argument provided, generate a random 4-digit number
         srand(time(0)); // Seed the random number generator
-        number = rand() % 9000 + 1000; // Generate a random 4-digit number
+        int number = rand() % 9000 + 1000; // Generate a random 4-digit number
+        kaprekarProcess(number);
     } else if (argc == 2) {
-        // A number is provided as a command-line argument
-        string input = argv[1];
-        if (input.length() == 4 && all_of(input.begin(), input.end(), ::isdigit)) {
-            number = stoi(input); // Convert string to integer
-            number = make4DigitNumber(number);
+        // Check if the argument is --min=<number>
+        string arg = argv[1];
+        if (arg.substr(0, 6) == "--min=") {
+            string minNumberStr = arg.substr(6);
+            if (all_of(minNumberStr.begin(), minNumberStr.end(), ::isdigit)) {
+                int minNumber = stoi(minNumberStr);
+                if (minNumber >= 1 && minNumber <= 9999) {
+                    listStepsForAllNumbers(minNumber);
+                } else {
+                    cout << "Invalid range. Please provide a number between 1 and 9999." << endl;
+                }
+            } else {
+                cout << "Invalid input. Please provide a valid number after --min=." << endl;
+            }
         } else {
-            cout << "Invalid input. Please provide a 4-digit number." << endl;
-            return 1; // Exit the program
+            // A number is provided as a command-line argument
+            string input = argv[1];
+            if (input.length() == 4 && all_of(input.begin(), input.end(), ::isdigit)) {
+                int number = stoi(input); // Convert string to integer
+                number = make4DigitNumber(number);
+                kaprekarProcess(number);
+            } else {
+                cout << "Invalid input. Please provide a 4-digit number." << endl;
+                return 1; // Exit the program
+            }
         }
     } else {
-        cout << "Usage: " << argv[0] << " [4-digit number]" << endl;
+        cout << "Usage: " << argv[0] << " [--min=<number>] [4-digit number]" << endl;
         return 1; // Exit the program
     }
-
-    kaprekarProcess(number);
 
     return 0;
 }
